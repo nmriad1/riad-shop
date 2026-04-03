@@ -5,12 +5,43 @@
 <title>Dealer Software</title>
 
 <style>
-body {font-family: Arial; margin:0; background:#f2f2f2;}
-header {background:black; color:white; text-align:center; padding:15px;}
-.box {background:white; margin:10px; padding:15px; border-radius:10px;}
-input, button {width:100%; padding:10px; margin-top:5px;}
-button {background:green; color:white; border:none;}
-.product {border:1px solid #ddd; padding:10px; margin-top:10px;}
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
+
+header {
+  background: black;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+
+.box {
+  background: white;
+  margin: 10px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+button {
+  background: green;
+  color: white;
+  border: none;
+}
+
+.product {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 5px;
+}
 </style>
 </head>
 
@@ -22,17 +53,17 @@ button {background:green; color:white; border:none;}
 
 <div class="box">
 <h3>Add Product</h3>
-<input id="pname" placeholder="Product Name">
-<input id="pcost" placeholder="Cost Price">
-<input id="pprice" placeholder="Sale Price">
-<input id="pqty" placeholder="Quantity">
+<input id="name" placeholder="Product Name">
+<input id="cost" placeholder="Cost Price" type="number">
+<input id="price" placeholder="Sale Price" type="number">
+<input id="qty" placeholder="Quantity" type="number">
 <button onclick="addProduct()">Add Product</button>
 </div>
 
 <div class="box">
 <h3>Sell Product</h3>
-<input id="sellname" placeholder="Product Name">
-<input id="sellqty" placeholder="Quantity">
+<input id="sellName" placeholder="Product Name">
+<input id="sellQty" placeholder="Quantity" type="number">
 <button onclick="sellProduct()">Sell</button>
 </div>
 
@@ -49,68 +80,58 @@ button {background:green; color:white; border:none;}
 
 <script>
 let products = JSON.parse(localStorage.getItem("products")) || [];
-let totalSales = parseInt(localStorage.getItem("sales")) || 0;
-let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
+let totalSales = 0;
+let totalProfit = 0;
 
-function save(){
+function saveData() {
   localStorage.setItem("products", JSON.stringify(products));
-  localStorage.setItem("sales", totalSales);
-  localStorage.setItem("profit", totalProfit);
 }
 
-function addProduct(){
-  let name = pname.value;
-  let cost = parseInt(pcost.value);
-  let price = parseInt(pprice.value);
-  let qty = parseInt(pqty.value);
+function addProduct() {
+  let name = document.getElementById("name").value;
+  let cost = Number(document.getElementById("cost").value);
+  let price = Number(document.getElementById("price").value);
+  let qty = Number(document.getElementById("qty").value);
 
   products.push({name, cost, price, qty});
-  save();
-  show();
+  saveData();
+  showProducts();
 }
 
-function sellProduct(){
-  let name = sellname.value;
-  let qty = parseInt(sellqty.value);
+function showProducts() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
 
-  let p = products.find(x => x.name === name);
+  products.forEach(p => {
+    list.innerHTML += `
+    <div class="product">
+      ${p.name} | Qty: ${p.qty} | Price: ${p.price}
+    </div>`;
+  });
+}
 
-  if(p && p.qty >= qty){
-    p.qty -= qty;
-    totalSales += p.price * qty;
-    totalProfit += (p.price - p.cost) * qty;
-    save();
-    show();
+function sellProduct() {
+  let name = document.getElementById("sellName").value;
+  let qty = Number(document.getElementById("sellQty").value);
+
+  let product = products.find(p => p.name === name);
+
+  if (product && product.qty >= qty) {
+    product.qty -= qty;
+    totalSales += product.price * qty;
+    totalProfit += (product.price - product.cost) * qty;
+
+    document.getElementById("sales").innerText = totalSales;
+    document.getElementById("profit").innerText = totalProfit;
+
+    saveData();
+    showProducts();
   } else {
-    alert("Stock nai!");
+    alert("Product not found or not enough stock");
   }
 }
 
-function deleteProduct(index){
-  products.splice(index,1);
-  save();
-  show();
-}
-
-function show(){
-  list.innerHTML = "";
-
-  products.forEach((p,i)=>{
-    list.innerHTML += `
-    <div class="product">
-      <b>${p.name}</b><br>
-      Stock: ${p.qty} <br>
-      Price: ${p.price}৳ <br><br>
-      <button onclick="deleteProduct(${i})">Delete</button>
-    </div>
-    `;
-  });
-
-  sales.innerText = totalSales;
-  profit.innerText = totalProfit;
-}
-
-show();
+showProducts();
 </script>
 
 </body>
