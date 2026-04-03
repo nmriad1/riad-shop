@@ -8,30 +8,59 @@
         body {
             font-family: Arial;
             margin: 0;
-            background: #eee;
+            background: #f2f2f2;
         }
 
         header {
-            background: black;
+            background: linear-gradient(45deg, #000, #333);
             color: white;
             text-align: center;
-            padding: 20px;
+            padding: 25px;
         }
 
-        .card {
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .product {
             background: white;
-            margin: 15px;
+            margin: 10px;
             padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .product img {
+            width: 100%;
             border-radius: 10px;
         }
 
+        .price {
+            color: green;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         button {
+            width: 100%;
             background: green;
             color: white;
             padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            margin-top: 10px;
             font-size: 16px;
+        }
+
+        .contact {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 12px;
         }
     </style>
 </head>
@@ -40,21 +69,43 @@
 
 <header>
     <h1>Riad Mobile Shop</h1>
-    <p>Best Products</p>
+    <p>Best Deals 🔥</p>
 </header>
 
-<div class="card">
-    <h2>Products</h2>
-    <p>Mobile | Electronics | Others</p>
+<div class="container">
 
-    <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I%20want%20to%20order" target="_blank">
-        <button>Order on WhatsApp</button>
-    </a>
-</div>
+    <div class="product">
+        <img src="https://via.placeholder.com/300x200">
+        <h3>Samsung Galaxy A14</h3>
+        <p class="price">৳18,000</p>
+        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Samsung A14" target="_blank">
+            <button>Order Now</button>
+        </a>
+    </div>
 
-<div class="card">
-    <h2>Contact</h2>
-    <p>Phone: 01572095352</p>
+    <div class="product">
+        <img src="https://via.placeholder.com/300x200">
+        <h3>Redmi Note 12</h3>
+        <p class="price">৳20,000</p>
+        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Redmi Note 12" target="_blank">
+            <button>Order Now</button>
+        </a>
+    </div>
+
+    <div class="product">
+        <img src="https://via.placeholder.com/300x200">
+        <h3>Realme C55</h3>
+        <p class="price">৳15,500</p>
+        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Realme C55" target="_blank">
+            <button>Order Now</button>
+        </a>
+    </div>
+
+    <div class="contact">
+        <h3>Contact</h3>
+        <p>📞 01572095352</p>
+    </div>
+
 </div>
 
 </body>
