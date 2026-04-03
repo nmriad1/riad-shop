@@ -1,112 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Riad Mobile Shop</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dealer Software</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            margin: 0;
-            background: #f2f2f2;
-        }
-
-        header {
-            background: linear-gradient(45deg, #000, #333);
-            color: white;
-            text-align: center;
-            padding: 25px;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
-        .container {
-            padding: 10px;
-        }
-
-        .product {
-            background: white;
-            margin: 10px;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .product img {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        .price {
-            color: green;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        button {
-            width: 100%;
-            background: green;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 16px;
-        }
-
-        .contact {
-            background: white;
-            margin: 10px;
-            padding: 15px;
-            border-radius: 12px;
-        }
-    </style>
+<style>
+body {font-family: Arial; margin:0; background:#f2f2f2;}
+header {background:black; color:white; text-align:center; padding:15px;}
+.box {background:white; margin:10px; padding:15px; border-radius:10px;}
+input, button {width:100%; padding:10px; margin-top:5px;}
+button {background:green; color:white; border:none;}
+</style>
 </head>
 
 <body>
 
 <header>
-    <h1>Riad Mobile Shop</h1>
-    <p>Best Deals 🔥</p>
+<h2>Dealer Management</h2>
 </header>
 
-<div class="container">
-
-    <div class="product">
-        <img src="https://via.placeholder.com/300x200">
-        <h3>Samsung Galaxy A14</h3>
-        <p class="price">৳18,000</p>
-        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Samsung A14" target="_blank">
-            <button>Order Now</button>
-        </a>
-    </div>
-
-    <div class="product">
-        <img src="https://via.placeholder.com/300x200">
-        <h3>Redmi Note 12</h3>
-        <p class="price">৳20,000</p>
-        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Redmi Note 12" target="_blank">
-            <button>Order Now</button>
-        </a>
-    </div>
-
-    <div class="product">
-        <img src="https://via.placeholder.com/300x200">
-        <h3>Realme C55</h3>
-        <p class="price">৳15,500</p>
-        <a href="https://api.whatsapp.com/send?phone=8801572095352&text=I want to order Realme C55" target="_blank">
-            <button>Order Now</button>
-        </a>
-    </div>
-
-    <div class="contact">
-        <h3>Contact</h3>
-        <p>📞 01572095352</p>
-    </div>
-
+<div class="box">
+<h3>Add Product</h3>
+<input id="pname" placeholder="Product Name">
+<input id="pcost" placeholder="Cost Price">
+<input id="pprice" placeholder="Sale Price">
+<input id="pqty" placeholder="Quantity">
+<button onclick="addProduct()">Add Product</button>
 </div>
+
+<div class="box">
+<h3>Sell Product</h3>
+<input id="sellname" placeholder="Product Name">
+<input id="sellqty" placeholder="Quantity">
+<button onclick="sellProduct()">Sell</button>
+</div>
+
+<div class="box">
+<h3>Dashboard</h3>
+<p>Total Sales: <span id="sales">0</span></p>
+<p>Total Profit: <span id="profit">0</span></p>
+</div>
+
+<div class="box">
+<h3>Product List</h3>
+<div id="list"></div>
+</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let totalSales = parseInt(localStorage.getItem("sales")) || 0;
+let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
+
+function save() {
+  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("sales", totalSales);
+  localStorage.setItem("profit", totalProfit);
+}
+
+function addProduct() {
+  let name = pname.value;
+  let cost = parseInt(pcost.value);
+  let price = parseInt(pprice.value);
+  let qty = parseInt(pqty.value);
+
+  products.push({name, cost, price, qty});
+  save();
+  show();
+}
+
+function sellProduct() {
+  let name = sellname.value;
+  let qty = parseInt(sellqty.value);
+
+  let p = products.find(x => x.name === name);
+
+  if(p && p.qty >= qty){
+    p.qty -= qty;
+    totalSales += p.price * qty;
+    totalProfit += (p.price - p.cost) * qty;
+    save();
+    show();
+  } else {
+    alert("Not enough stock!");
+  }
+}
+
+function show() {
+  list.innerHTML = "";
+  products.forEach(p=>{
+    list.innerHTML += `<p>${p.name} | Stock: ${p.qty}</p>`;
+  });
+
+  sales.innerText = totalSales;
+  profit.innerText = totalProfit;
+}
+
+show();
+</script>
 
 </body>
 </html>
