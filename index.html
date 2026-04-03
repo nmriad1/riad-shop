@@ -5,43 +5,12 @@
 <title>Dealer Software</title>
 
 <style>
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #f2f2f2;
-}
-
-header {
-  background: black;
-  color: white;
-  text-align: center;
-  padding: 15px;
-}
-
-.box {
-  background: white;
-  margin: 10px;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-}
-
-button {
-  background: green;
-  color: white;
-  border: none;
-}
-
-.product {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-top: 5px;
-}
+body {font-family: Arial; margin:0; background:#f2f2f2;}
+header {background:black; color:white; text-align:center; padding:15px;}
+.box {background:white; margin:10px; padding:15px; border-radius:10px;}
+input, button {width:100%; padding:10px; margin-top:5px;}
+button {background:green; color:white; border:none;}
+.product {border:1px solid #ddd; padding:10px; margin-top:5px;}
 </style>
 </head>
 
@@ -54,16 +23,16 @@ button {
 <div class="box">
 <h3>Add Product</h3>
 <input id="name" placeholder="Product Name">
-<input id="cost" placeholder="Cost Price" type="number">
-<input id="price" placeholder="Sale Price" type="number">
-<input id="qty" placeholder="Quantity" type="number">
+<input id="cost" type="number" placeholder="Cost Price">
+<input id="price" type="number" placeholder="Sale Price">
+<input id="qty" type="number" placeholder="Quantity">
 <button onclick="addProduct()">Add Product</button>
 </div>
 
 <div class="box">
 <h3>Sell Product</h3>
 <input id="sellName" placeholder="Product Name">
-<input id="sellQty" placeholder="Quantity" type="number">
+<input id="sellQty" type="number" placeholder="Quantity">
 <button onclick="sellProduct()">Sell</button>
 </div>
 
@@ -80,21 +49,32 @@ button {
 
 <script>
 let products = JSON.parse(localStorage.getItem("products")) || [];
-let totalSales = 0;
-let totalProfit = 0;
+let totalSales = Number(localStorage.getItem("sales")) || 0;
+let totalProfit = Number(localStorage.getItem("profit")) || 0;
 
-function saveData() {
+function saveAll() {
   localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("sales", totalSales);
+  localStorage.setItem("profit", totalProfit);
 }
 
 function addProduct() {
-  let name = document.getElementById("name").value;
+  let name = document.getElementById("name").value.trim();
   let cost = Number(document.getElementById("cost").value);
   let price = Number(document.getElementById("price").value);
   let qty = Number(document.getElementById("qty").value);
 
-  products.push({name, cost, price, qty});
-  saveData();
+  if(!name) return alert("Enter product name");
+
+  let existing = products.find(p => p.name === name);
+
+  if(existing){
+    existing.qty += qty;
+  } else {
+    products.push({name, cost, price, qty});
+  }
+
+  saveAll();
   showProducts();
 }
 
@@ -105,29 +85,31 @@ function showProducts() {
   products.forEach(p => {
     list.innerHTML += `
     <div class="product">
-      ${p.name} | Qty: ${p.qty} | Price: ${p.price}
+      <b>${p.name}</b><br>
+      Qty: ${p.qty} | Price: ${p.price}
     </div>`;
   });
+
+  document.getElementById("sales").innerText = totalSales;
+  document.getElementById("profit").innerText = totalProfit;
 }
 
 function sellProduct() {
-  let name = document.getElementById("sellName").value;
+  let name = document.getElementById("sellName").value.trim();
   let qty = Number(document.getElementById("sellQty").value);
 
   let product = products.find(p => p.name === name);
 
-  if (product && product.qty >= qty) {
+  if(product && product.qty >= qty){
     product.qty -= qty;
+
     totalSales += product.price * qty;
     totalProfit += (product.price - product.cost) * qty;
 
-    document.getElementById("sales").innerText = totalSales;
-    document.getElementById("profit").innerText = totalProfit;
-
-    saveData();
+    saveAll();
     showProducts();
   } else {
-    alert("Product not found or not enough stock");
+    alert("Product not found or stock low");
   }
 }
 
