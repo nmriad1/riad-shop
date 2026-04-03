@@ -10,6 +10,7 @@ header {background:black; color:white; text-align:center; padding:15px;}
 .box {background:white; margin:10px; padding:15px; border-radius:10px;}
 input, button {width:100%; padding:10px; margin-top:5px;}
 button {background:green; color:white; border:none;}
+.product {border:1px solid #ddd; padding:10px; margin-top:10px;}
 </style>
 </head>
 
@@ -51,13 +52,13 @@ let products = JSON.parse(localStorage.getItem("products")) || [];
 let totalSales = parseInt(localStorage.getItem("sales")) || 0;
 let totalProfit = parseInt(localStorage.getItem("profit")) || 0;
 
-function save() {
+function save(){
   localStorage.setItem("products", JSON.stringify(products));
   localStorage.setItem("sales", totalSales);
   localStorage.setItem("profit", totalProfit);
 }
 
-function addProduct() {
+function addProduct(){
   let name = pname.value;
   let cost = parseInt(pcost.value);
   let price = parseInt(pprice.value);
@@ -68,7 +69,7 @@ function addProduct() {
   show();
 }
 
-function sellProduct() {
+function sellProduct(){
   let name = sellname.value;
   let qty = parseInt(sellqty.value);
 
@@ -81,14 +82,28 @@ function sellProduct() {
     save();
     show();
   } else {
-    alert("Not enough stock!");
+    alert("Stock nai!");
   }
 }
 
-function show() {
+function deleteProduct(index){
+  products.splice(index,1);
+  save();
+  show();
+}
+
+function show(){
   list.innerHTML = "";
-  products.forEach(p=>{
-    list.innerHTML += `<p>${p.name} | Stock: ${p.qty}</p>`;
+
+  products.forEach((p,i)=>{
+    list.innerHTML += `
+    <div class="product">
+      <b>${p.name}</b><br>
+      Stock: ${p.qty} <br>
+      Price: ${p.price}৳ <br><br>
+      <button onclick="deleteProduct(${i})">Delete</button>
+    </div>
+    `;
   });
 
   sales.innerText = totalSales;
